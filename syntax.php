@@ -27,6 +27,9 @@ All fields optional, minimal syntax:
  05/08/2015 : Merged lisps default style option and added french translation
  12/09/2015 : Fixed PHP error
  
+ @author ThisNameIsNotAllowed
+ 17/11/2016 : Added generation of metadata
+ 
  */
 
 if(!defined('DOKU_INC')) die();

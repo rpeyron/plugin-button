@@ -5,8 +5,9 @@
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author     Xavier Decuyper <xavier.decuyper@gmail.com>
  * 
- * Extended for usage with the move plugin
+ * 
  * @author     ThisNameIsNotAllowed
+ * 17/11/2016 : Extended for usage with the move plugin (Added eventhandler and callback)
  */
 
 // must be run within Dokuwiki
