@@ -197,7 +197,9 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
                             $link['name'] = $match['title'];
                             if ($link['name'] == "") $link['name'] = $match['link'];
                             $link['class'] = 'urlextern';
-                            $match['target'] = $conf['target']['extern'];
+                            if(strlen($match['target']) == 0){
+                                $match['target'] = $conf['target']['extern'];
+                            }
                         }
                         else
                         {
