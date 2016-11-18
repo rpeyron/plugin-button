@@ -29,7 +29,7 @@ All fields optional, minimal syntax:
  
  @author ThisNameIsNotAllowed
  17/11/2016 : Added generation of metadata
- 
+ 18/11/2016 : Added default target for external links
  */
 
 if(!defined('DOKU_INC')) die();
