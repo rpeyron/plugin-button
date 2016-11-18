@@ -177,6 +177,7 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
         global $plugin_button_styles;
         global $plugin_button_target;
         global $ID;
+        global $conf;
 
         if($mode == 'xhtml'){
             list($state, $match) = $data;
@@ -196,6 +197,7 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
                             $link['name'] = $match['title'];
                             if ($link['name'] == "") $link['name'] = $match['link'];
                             $link['class'] = 'urlextern';
+                            $match['target'] = $conf['target']['extern'];
                         }
                         else
                         {
