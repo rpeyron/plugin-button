@@ -30,6 +30,9 @@ All fields optional, minimal syntax:
  @author ThisNameIsNotAllowed
  17/11/2016 : Added generation of metadata
  18/11/2016 : Added default target for external links
+ 
+ @author lisps
+ 05/03/2017 : Merged lisps move compatibility fixes
  */
 
 if(!defined('DOKU_INC')) die();
