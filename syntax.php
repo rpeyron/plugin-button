@@ -230,9 +230,6 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
                               ),
                           ),
                           'plugin_move'=>array(
-                              'origin'=>array(
-                                  $match['link']=>true,
-                              ),
                               'pages'=>array(
                                   $match['link'],
                               ),

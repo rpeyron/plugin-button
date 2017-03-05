@@ -55,18 +55,20 @@ class action_plugin_button extends DokuWiki_Action_Plugin {
         return $newpage;
     }
   
-    public function rewrite_button($match, $pos, $state, $plugin, helper_plugin_move_handler $handler)
+    public function rewrite_button($match, $state, $pos, $plugin, helper_plugin_move_handler $handler)
     {
         $returnValue = $match;
     
+        if($state !== DOKU_LEXER_ENTER) return $returnValue;
         if (preg_match('/\[\[{(?<image>[^}\|]*)\|?(?<css>[^}]*)}(?<link>[^\]\|]*)\|?(?<title>[^\]]*)/', $match, $data))
         {
             // Skip syntaxes that should not be rewritten
-            if (($data['image'] != 'conf.styles') && ($data['image'] != 'conf.target'))
-            {
-                // Adapt image 
+            if (($data['image'] != 'conf.styles') && ($data['image'] != 'conf.target') && $data['image']) {
                 $data['image'] = $this->move_newid($handler, $data['image'], 'media');
+            }
+            if($data['link']) { // Adapt image
                 $data['link'] = $this->move_newid($handler, $data['link'], 'page');
+            }
                 // Rebuild button syntax
                 $returnValue="[[{" . $data['image'];
                 if ($data['css'])  $returnValue .= "|" . $data['css'];
@@ -75,11 +77,8 @@ class action_plugin_button extends DokuWiki_Action_Plugin {
                 if (substr($match,-1) == "|")  $returnValue.="|";
                 if ($data['title'])  $returnValue .= "|" . $data['title'];
             }
-        }
-
         //dbglog("REWRITE  : " . $match . "  ---->   " . $returnValue);
         return $returnValue;
     }
-    
 }
 
