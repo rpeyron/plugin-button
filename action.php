@@ -60,14 +60,20 @@ class action_plugin_button extends DokuWiki_Action_Plugin {
         $returnValue = $match;
     
         if($state !== DOKU_LEXER_ENTER) return $returnValue;
+		
+		// If same identifier do nothing  (do not work, have not found how to detect if it is a real move or only a new display...)
+		//if (($handler->id == $handler->origID) && ($handler->ns == $handler->origNS)) return $returnValue;
+		
         if (preg_match('/\[\[{(?<image>[^}\|]*)\|?(?<css>[^}]*)}(?<link>[^\]\|]*)\|?(?<title>[^\]]*)/', $match, $data))
         {
             // Skip syntaxes that should not be rewritten
             if (($data['image'] != 'conf.styles') && ($data['image'] != 'conf.target') && $data['image']) {
                 $data['image'] = $this->move_newid($handler, $data['image'], 'media');
             }
-            if($data['link']) { // Adapt image
-                $data['link'] = $this->move_newid($handler, $data['link'], 'page');
+            if($data['link']) { // Adapt link
+				$link_items=explode("#",$data['link']);
+                $link_items[0] = $this->move_newid($handler, $link_items[0], 'page');
+				$data['link'] = implode("#",$link_items);
             }
                 // Rebuild button syntax
                 $returnValue="[[{" . $data['image'];
