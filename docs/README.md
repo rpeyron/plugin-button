@@ -1,1 +1,1 @@
-Please refer to the documentation on the plugin page located at [https://www.dokuwiki.org/plugin:button].
+Please refer to the documentation on the [dokuwiki's  plugin page](https://www.dokuwiki.org/plugin:button).
