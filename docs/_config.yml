@@ -1,1 +1,16 @@
 theme: jekyll-theme-cayman
+title: Dokuwiki's button plugin
+description: Host button plugin documentation images
+show_downloads: "true"
+
+github:
+  another_url: https://www.dokuwiki.org/plugin:button
+  
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  
+author:
+  name:       Rémi Peyronnet
+  url:        https://www.lprp.fr
