@@ -169,7 +169,7 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
                 return array($state, $data);
  
           case DOKU_LEXER_UNMATCHED :  return array($state, $match); 
-          case DOKU_LEXER_ENTRY :          return array($state, '');
+          case DOKU_LEXER_ENTER :          return array($state, '');
           case DOKU_LEXER_EXIT :            return array($state, '');
         }
         return array();
