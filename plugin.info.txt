@@ -1,7 +1,7 @@
 base   button
 author Remi Peyronnet
 email  remi+button@via.ecp.fr
-date   2018-03-07
+date   2020-03-07
 name   Button Plugin
 desc   Add button links syntax
 url    https://www.dokuwiki.org/plugin:button
