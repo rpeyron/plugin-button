@@ -26,6 +26,7 @@ All fields optional, minimal syntax:
  28/04/2015 : Refactored global config handling, add internal media link support, add escaping of userinput (contribution from Peter Stumm   https://github.com/lisps/plugin-button)
  05/08/2015 : Merged lisps default style option and added french translation
  12/09/2015 : Fixed PHP error
+ 30/04/2020 : Fixed spaces in image field
  
  @author ThisNameIsNotAllowed
  17/11/2016 : Added generation of metadata
@@ -127,7 +128,7 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
           case DOKU_LEXER_ENTER :
                 $data = '';
                 // Button
-                if (preg_match('/\[\[{(?<image>[^}\|]*)\|?(?<css>[^}]*)}(?<link>[^\]\|]*)\|?(?<title>[^\]]*)/', $match, $matches))
+                if (preg_match('/\[\[{ *(?<image>[^}\|]*) *\|?(?<css>[^}]*)}(?<link>[^\]\|]*)\|?(?<title>[^\]]*)/', $match, $matches))
                 {
                     $data = $matches;
                 }
