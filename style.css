@@ -15,14 +15,19 @@
 	text-decoration:none;
 	display: inline-table;
 	text-align:center;
+	text-shadow:1px 1px 0px #ffffff;
+	vertical-align: middle;
 }
+
+/* 2020-05-11 : moved maximum CSS up a level to allow override on a per-button basis 
+ - text-shallow : simply moved
+ - vertical-align : force inherit to get the one from upper level
+*/
 
 .plugin_button_text {
 	display: table-cell;
 	width: 99%;
-	text-align: center;
-	vertical-align: middle;
-	text-shadow:1px 1px 0px #ffffff;
+	vertical-align: inherit;
 }
 
 .plugin_button_text.mediafile {
@@ -31,7 +36,7 @@
 
 .plugin_button_image {
 	display: table-cell;
-	vertical-align: middle;
+	vertical-align: inherit;
 	white-space: nowrap;
 	padding-right: 1em;
 }
