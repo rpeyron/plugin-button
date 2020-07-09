@@ -193,10 +193,13 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
                     if (($image != "conf.target") && ($image != "conf.styles"))
                     {
                         // Test if internal or external link (from handler.php / internallink)
-                        if (preg_match('#^([a-z0-9\-\.+]+?)://#i',$match['link']))
+						// 2020-07-09 : added special prefix '/' to allow other URI schemes without '//' in it (ex : mailto)
+                        if ( (substr($match['link'],0,1) === "/") || (preg_match('#^([a-z0-9\-\.+]+?)://#i',$match['link'])))
                         {
                             // External
                             $link['url'] = $match['link'];
+							// Strip trailing /
+							if (substr($link['url'],0,1) === "/") { $link['url'] = substr($link['url'],1);  }
                             $link['name'] = $match['title'];
                             if ($link['name'] == "") $link['name'] = $match['link'];
                             $link['class'] = 'urlextern';
