@@ -201,6 +201,12 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
                             $link['url'] = $match['link'];
 							// Strip trailing prefix
 							if (substr($link['url'],0,strlen($force_uri_prefix)) === $force_uri_prefix) { $link['url'] = substr($link['url'], strlen($force_uri_prefix));  }
+							// Check if it is an allowed protocol
+							$link_items=explode(":",$link['url']);
+							// Adds mailto as it is implicitely allowed wih mail syntax.
+							if (! in_array($link_items[0],getSchemes() + array('mailto'))) {
+								$link['url']="Unauthorized URI scheme";
+							}
                             $link['name'] = $match['title'];
                             if ($link['name'] == "") $link['name'] = $match['link'];
                             $link['class'] = 'urlextern';
