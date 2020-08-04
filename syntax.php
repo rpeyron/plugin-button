@@ -27,6 +27,7 @@ All fields optional, minimal syntax:
  05/08/2015 : Merged lisps default style option and added french translation
  12/09/2015 : Fixed PHP error
  30/04/2020 : Fixed spaces in image field
+ 04/08/2020 : Quick hack to add compatibility with hogfather
  
  @author ThisNameIsNotAllowed
  17/11/2016 : Added generation of metadata
@@ -38,7 +39,16 @@ All fields optional, minimal syntax:
 
 if(!defined('DOKU_INC')) die();
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
-require_once(DOKU_PLUGIN.'syntax.php');
+require_once(DOKU_PLUGIN.'syntax.php');  // Deprecated in latest Dokuwiki's release, to be removed
+
+/*  2020-08-04 - This is a quick hack to fix compatibility issue with hogfather (see issue #13) :
+ *  It seems that the handler.php file is no more loaded when rendering cached contents, causing a crash.
+ *  This is due to a bad initial conception of this plugin that does not comply to dokuwiki's guidance of handle / render repartition.
+ *  
+ *  FIXME : refactor handle / render repartition ; most of the processing should be moved in the handle section.
+ *  /!\ to be able to do that (and thus, modify the cached content structure) need to find a way to clear the cache while upgrading the plugin...
+ */
+require_once(DOKU_INC.'inc/parser/handler.php');
 
 class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
 
