@@ -42,7 +42,7 @@
 }
 
 /*  2014-07-28 : fix bizarre chrome behaviour */ 
-.plugin_button_image img {
+#content .plugin_button_image img , .plugin_button_image img {
 	max-width: none;   
 }
 
