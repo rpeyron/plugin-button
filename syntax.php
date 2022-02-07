@@ -28,6 +28,7 @@ All fields optional, minimal syntax:
  12/09/2015 : Fixed PHP error
  30/04/2020 : Fixed spaces in image field
  04/08/2020 : Quick hack to add compatibility with hogfather
+ 07/02/2022 : Added Português do Brasil translation (PR by mac-sousa)
  
  @author ThisNameIsNotAllowed
  17/11/2016 : Added generation of metadata
