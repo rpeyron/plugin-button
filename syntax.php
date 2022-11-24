@@ -96,11 +96,14 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
             foreach ($styles as $style) {
                 $style = trim($style);
                 if(!$style) continue;
+		    
+		if (str_contains($style, '|')) {
                 
-                $style = explode('|', $style,2);
-                if(!is_array($style) || !$style[0] || !$style[1]) continue;
+                     $style = explode('|', $style,2);
+                     if(!is_array($style) || !$style[0] || !$style[1]) continue;
                 
-                $this->confStyles[trim($style[0])] = trim($style[1]);
+                     $this->confStyles[trim($style[0])] = trim($style[1]);
+		}
             }
             //dbg($this->confStyles);
         
@@ -126,7 +129,7 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
     }
     protected function hasTarget($name) {
         global $ID;
-        return (is_array($this->targets[$ID]) && array_key_exists($name,$this->targets[$ID])) ? true : false;
+        return (array_key_exists($ID,$this->targets) && is_array($this->targets[$ID]) && array_key_exists($name,$this->targets[$ID])) ? true : false;
     }
     
     function handle($match, $state, $pos, Doku_Handler $handler)
