@@ -80,7 +80,7 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
     }
     protected function hasStyle($name) {
         global $ID;
-        return (is_array($this->styles[$ID]) && array_key_exists($name,$this->styles[$ID])) 
+        return (array_key_exists($ID,$this->styles) && is_array($this->styles[$ID]) && array_key_exists($name,$this->styles[$ID])) 
                     || $this->getConfStyles($name) ? true : false;
     }
     protected function getConfStyles($name = null) {
@@ -362,6 +362,7 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
         }
     
         //keep hash anchor
+	$hash = NULL;
         if (str_contains($id, '#')) list($id,$hash) = explode('#',$id,2);
         if(!empty($hash)) $hash = $xhtml->_headerToLink($hash);
     
@@ -407,6 +408,8 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
     function internalmedia (&$xhtml, $src, $title=NULL, $align=NULL, $width=NULL,
             $height=NULL, $cache=NULL, $linking=NULL) {
         global $ID;
+	    
+	$hash = NULL;
         if (str_contains($src, '#')) list($src,$hash) = explode('#',$src,2);
         resolve_mediaid(getNS($ID),$src, $exists);
     
