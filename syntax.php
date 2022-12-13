@@ -52,6 +52,14 @@ require_once(DOKU_PLUGIN.'syntax.php');  // Deprecated in latest Dokuwiki's rele
  */
 require_once(DOKU_INC.'inc/parser/handler.php');
 
+// str_contains polyfill for PHP versions before PHP8  (by jnv - #26)
+if (!function_exists('str_contains')) {
+    function str_contains(string $haystack, string $needle): bool
+    {
+        return '' === $needle || false !== strpos($haystack, $needle);
+    }
+}
+
 class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
 
     function getType() { return 'substition'; }
