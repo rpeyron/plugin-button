@@ -30,6 +30,7 @@ All fields optional, minimal syntax:
  04/08/2020 : Quick hack to add compatibility with hogfather
  07/02/2022 : Added Português do Brasil translation (PR by mac-sousa)
  26/11/2022 : Fixed PHP8.1 warnings
+ 13/12/2022 : Fixed PHP7 with str_contains polyfill
  
  @author ThisNameIsNotAllowed
  17/11/2016 : Added generation of metadata
