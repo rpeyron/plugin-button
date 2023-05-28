@@ -13,11 +13,15 @@
  * 19/11/2016 : rewrote move plugin handler to work with all button syntaxes
  */
 
+/*
+// Thanks to #28 : autoloaded & now deprecated (https://www.dokuwiki.org/devel:releases:refactor2020)
+
 // must be run within Dokuwiki
 if(!defined('DOKU_INC')) die();
 
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 require_once(DOKU_PLUGIN.'action.php');
+*/
 
 class action_plugin_button extends DokuWiki_Action_Plugin {
 
