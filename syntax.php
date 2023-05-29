@@ -31,7 +31,6 @@ All fields optional, minimal syntax:
  07/02/2022 : Added Português do Brasil translation (PR by mac-sousa)
  26/11/2022 : Fixed PHP8.1 warnings
  13/12/2022 : Fixed PHP7 with str_contains polyfill
- 29/05/2023 : fixed deprecated (resolvers & require)
  
  @author ThisNameIsNotAllowed
  17/11/2016 : Added generation of metadata
@@ -41,18 +40,9 @@ All fields optional, minimal syntax:
  05/03/2017 : Merged lisps move compatibility fixes
  */
 
-
 if(!defined('DOKU_INC')) die();
-
-// Refer namespaces used
-use dokuwiki\File\PageResolver;
-use dokuwiki\File\MediaResolver;
-
-/*
-// autoloaded, now deprecated
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 require_once(DOKU_PLUGIN.'syntax.php');  // Deprecated in latest Dokuwiki's release, to be removed
-*/
 
 /*  2020-08-04 - This is a quick hack to fix compatibility issue with hogfather (see issue #13) :
  *  It seems that the handler.php file is no more loaded when rendering cached contents, causing a crash.
@@ -320,20 +310,12 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
     function dokuwiki_get_link(&$xhtml, $id, $name = NULL) {
         global $ID;
         $resolveid = $id;    // To prevent resolve_pageid to change $id value
-        //page file?
-        // resolve_pageid(getNS($ID),$resolveid,$exists);   // deprecated (https://www.dokuwiki.org/devel:releases:refactor2021)
-        $resolver = new PageResolver($resolveid);
-        $mid = $resolver->resolveId($resolveid);
-        $exists = page_exists($mid);
+        resolve_pageid(getNS($ID),$resolveid,$exists); //page file?
         if($exists) {
             return $this->internallink($xhtml,$id,$name);
         } 
-        //media file?
         $resolveid = $id;   
-        // resolve_mediaid(getNS($ID),$resolveid,$exists); // deprecated
-        $resolver = new MediaResolver($resolveid);
-        $mid = $resolver->resolveId($resolveid);
-        $exists = media_exists($mid);
+        resolve_mediaid(getNS($ID),$resolveid,$exists); //media file?
         if($exists) {
             return $this->internalmedia($xhtml,$id,$name);
         } else {
@@ -341,15 +323,14 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
         }
     }
     
-    // Copied and adapted from inc/parser/xhtml.php, function internallink to retuen link object instead of HTML (+see RPHACK)
+    // Copied and adapted from inc/parser/xhtml.php, function internallink (see RPHACK)
     // Should use wl instead (from commons), but this won't do the trick for the name
     function internallink(&$xhtml, $id, $name = NULL, $search=NULL,$returnonly=false,$linktype='content')
     {
         global $conf;
         global $ID;
         global $INFO;
-
-        $hash = NULL;
+    
     
         $params = '';
         $parts = explode('?', $id, 2);
@@ -369,7 +350,6 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
         // RPHACK for get_link to work with local links '#id'
         if (substr($id, 0, 1) === '#') {
             $id = $ID . $id;
-            list($_dummy,$hash) = explode('#',$id,2);
         }
         // -------
     
@@ -377,11 +357,7 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
         $default = $xhtml->_simpleTitle($id);
     
         // now first resolve and clean up the $id
-        //resolve_pageid(getNS($ID),$id,$exists);
-        $resolver = new PageResolver($ID);
-        $id = $resolver->resolveId($ID);
-        $exists = page_exists($id);
-
+        resolve_pageid(getNS($ID),$id,$exists);
     
         $name = $xhtml->_getLinkTitle($name, $default, $isImage, $id, $linktype);
         if ( !$isImage ) {
@@ -396,6 +372,7 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
         }
     
         //keep hash anchor
+	$hash = NULL;
         if (str_contains($id, '#')) list($id,$hash) = explode('#',$id,2);
         if(!empty($hash)) $hash = $xhtml->_headerToLink($hash);
     
@@ -438,18 +415,13 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
     }
     
     
-    // Copied and adapted from inc/parser/xhtml.php, to retuen link object instead of HTML
     function internalmedia (&$xhtml, $src, $title=NULL, $align=NULL, $width=NULL,
             $height=NULL, $cache=NULL, $linking=NULL) {
         global $ID;
 	    
-	    $hash = NULL;
+	$hash = NULL;
         if (str_contains($src, '#')) list($src,$hash) = explode('#',$src,2);
-
-        //resolve_mediaid(getNS($ID),$src, $exists);
-        $resolver = new MediaResolver($src);
-        $src = $resolver->resolveId($src);
-        $exists = media_exists($src);
+        resolve_mediaid(getNS($ID),$src, $exists);
     
         $noLink = false;
         $render = ($linking == 'linkonly') ? false : true;
@@ -477,9 +449,9 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
         }
     
         return $link;
-        // output formatted
-        // if ($linking == 'nolink' || $noLink) $this->doc .= $link['name'];
-        // else $this->doc .= $this->_formatLink($link);
+        //output formatted
+//         if ($linking == 'nolink' || $noLink) $this->doc .= $link['name'];
+//         else $this->doc .= $this->_formatLink($link);
     }
 }
 
