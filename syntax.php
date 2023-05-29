@@ -31,6 +31,7 @@ All fields optional, minimal syntax:
  07/02/2022 : Added Português do Brasil translation (PR by mac-sousa)
  26/11/2022 : Fixed PHP8.1 warnings
  13/12/2022 : Fixed PHP7 with str_contains polyfill
+ 29/05/2023 : fixed deprecated (resolvers & require)
  
  @author ThisNameIsNotAllowed
  17/11/2016 : Added generation of metadata
@@ -340,14 +341,15 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
         }
     }
     
-    // Copied and adapted from inc/parser/xhtml.php, function internallink (see RPHACK)
+    // Copied and adapted from inc/parser/xhtml.php, function internallink to retuen link object instead of HTML (+see RPHACK)
     // Should use wl instead (from commons), but this won't do the trick for the name
     function internallink(&$xhtml, $id, $name = NULL, $search=NULL,$returnonly=false,$linktype='content')
     {
         global $conf;
         global $ID;
         global $INFO;
-    
+
+        $hash = NULL;
     
         $params = '';
         $parts = explode('?', $id, 2);
@@ -367,6 +369,7 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
         // RPHACK for get_link to work with local links '#id'
         if (substr($id, 0, 1) === '#') {
             $id = $ID . $id;
+            list($_dummy,$hash) = explode('#',$id,2);
         }
         // -------
     
@@ -393,7 +396,6 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
         }
     
         //keep hash anchor
-	$hash = NULL;
         if (str_contains($id, '#')) list($id,$hash) = explode('#',$id,2);
         if(!empty($hash)) $hash = $xhtml->_headerToLink($hash);
     
@@ -436,19 +438,18 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
     }
     
     
+    // Copied and adapted from inc/parser/xhtml.php, to retuen link object instead of HTML
     function internalmedia (&$xhtml, $src, $title=NULL, $align=NULL, $width=NULL,
             $height=NULL, $cache=NULL, $linking=NULL) {
         global $ID;
 	    
-	$hash = NULL;
+	    $hash = NULL;
         if (str_contains($src, '#')) list($src,$hash) = explode('#',$src,2);
 
-        resolve_mediaid(getNS($ID),$src, $exists);
-        /*
-        $resolver = new MediaResolver($ID);
+        //resolve_mediaid(getNS($ID),$src, $exists);
+        $resolver = new MediaResolver($src);
         $src = $resolver->resolveId($src);
         $exists = media_exists($src);
-        */
     
         $noLink = false;
         $render = ($linking == 'linkonly') ? false : true;
@@ -476,9 +477,9 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
         }
     
         return $link;
-        //output formatted
-//         if ($linking == 'nolink' || $noLink) $this->doc .= $link['name'];
-//         else $this->doc .= $this->_formatLink($link);
+        // output formatted
+        // if ($linking == 'nolink' || $noLink) $this->doc .= $link['name'];
+        // else $this->doc .= $this->_formatLink($link);
     }
 }
 
