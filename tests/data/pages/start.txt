@@ -1,0 +1,69 @@
+====== Tests for button plugin ======
+
+[[target]] - [[folder:target2]]
+
+
+Default target new page [[{conf.target}toto|_blank]]
+
+Default style green and 15em [[{conf.styles}default|color:green; width:15em;]]
+
+Second style blue and 25em [[{conf.styles}second|color:blue; width:25em;]]
+
+
+===== Basic tests =====
+
+Basic button: [[{{buttons:books.png}target]] 
+ 
+Header: 
+[[{buttons:fbreader.png|default}#Header]]
+[[{}#Header]]
+[[{}folder:target2#Header]]
+[[#Header]]
+ 
+
+Namespace: [[{{buttons:books.png}folder:target2]] 
+
+Title: [[{{buttons:books.png}folder:target2|Second target]] 
+
+Style inside button: [[{buttons:fbreader.png|default}Bouton|Bouton **gras** ]]  
+
+[[{buttons:fbreader.png|second}target|Other button with a long text]]
+
+[[{buttons:fbreader.png|second}target|Other button \\ with a new line]]
+
+
+===== Custom styles =====
+
+[[{buttons:fbreader.png?32|width: 15em;flex-direction: column;display: flex;}target]]
+
+[[{buttons:fbreader.png|width: 25em; display: table; margin: 0 auto; }target|Centered button]] 
+
+[[{buttons:fbreader.png|width: 25em; position: absolute;margin: auto; right: 0; left: 0; width: 100px; height: 100px; background-color: #ccc;}target|Button with same size]] 
+
+
+===== Various =====
+
+==== Custom protocols ====
+
+[[apt://test|Test apt]]
+[[mailto:nobody@nobody.org|Test mailto]]
+[[telnet://localhost|Test telnet]]
+[[\\server\space]]
+
+[[{buttons:fbreader.png|default}mailto:test@test.org|test@test.org]] 
+[[{buttons:fbreader.png|default}!apt:toto|Package toto]] 
+[[{buttons:fbreader.png|default}https://google.com|Google]] 
+[[{buttons:fbreader.png|default}telnet://localhost|Telnet]] 
+[[{buttons:fbreader.png|default}file:///\\server\space|Server Space]] [[{buttons:fbreader.png|default}!file:\\server\space|Server Space]] 
+
+
+===== Some dokuwiki reminders =====
+
+Interwiki syntax: {{icon>home}} (not supported with button)
+
+
+===== Header =====
+
+
+
+

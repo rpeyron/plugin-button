@@ -1,0 +1,20 @@
+{
+	"name": "dokuwiki-devcontainer",
+	"image": "linuxserver/dokuwiki:latest",
+    "overrideCommand": false,	// to use dockefile command
+	"forwardPorts": [80],
+
+	// Copy default configuration file with admin test:test
+	"postCreateCommand": "cp -rf /workspace/button/tests/conf/* /config/dokuwiki/conf && chown -R abc:abc /config/dokuwiki && ln -sf /workspace/button /config/dokuwiki/lib/plugins",
+
+	// Mount workspace
+	"workspaceMount": "source=${localWorkspaceFolder},target=/workspace/button,type=bind",
+	"workspaceFolder": "/workspace/button",
+
+	// Mount data/pages and data/media (other contents will be lost)
+	"mounts": [
+		"source=${localWorkspaceFolder}/tests/data/pages,target=/config/dokuwiki/data/pages,type=bind,consistency=cached",
+		"source=${localWorkspaceFolder}/tests/data/media,target=/config/dokuwiki/data/media,type=bind,consistency=cached",
+	]
+
+}
