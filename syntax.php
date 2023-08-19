@@ -39,10 +39,11 @@ All fields optional, minimal syntax:
  @author lisps
  05/03/2017 : Merged lisps move compatibility fixes
  */
+use dokuwiki\File\PageResolver;
+use dokuwiki\File\MediaResolver;
 
 if(!defined('DOKU_INC')) die();
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
-require_once(DOKU_PLUGIN.'syntax.php');  // Deprecated in latest Dokuwiki's release, to be removed
 
 /*  2020-08-04 - This is a quick hack to fix compatibility issue with hogfather (see issue #13) :
  *  It seems that the handler.php file is no more loaded when rendering cached contents, causing a crash.
@@ -106,14 +107,14 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
             foreach ($styles as $style) {
                 $style = trim($style);
                 if(!$style) continue;
-		    
-		if (str_contains($style, '|')) {
+            
+        if (str_contains($style, '|')) {
                 
                      $style = explode('|', $style,2);
                      if(!is_array($style) || !$style[0] || !$style[1]) continue;
                 
                      $this->confStyles[trim($style[0])] = trim($style[1]);
-		}
+        }
             }
             //dbg($this->confStyles);
         
@@ -218,19 +219,19 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
                     {
                         // Test if internal or external link (from handler.php / internallink)
                         // 2020-07-09 : added special prefix '!' to allow other URI schemes without '//' in it (ex : apt,...)
-						$force_uri_prefix = "!";  // "/" can be confused with url, "!" not working
+                        $force_uri_prefix = "!";  // "/" can be confused with url, "!" not working
                         if ( (substr($match['link'],0,strlen($force_uri_prefix)) === $force_uri_prefix) || (preg_match('#^mailto:|^([a-z0-9\-\.+]+?)://#i',$match['link'])))
                         {
                             // External
                             $link['url'] = $match['link'];
-							// Strip trailing prefix
-							if (substr($link['url'],0,strlen($force_uri_prefix)) === $force_uri_prefix) { $link['url'] = substr($link['url'], strlen($force_uri_prefix));  }
-							// Check if it is an allowed protocol
-							$link_items=explode(":",$link['url']);
-							// Adds mailto as it is implicitely allowed wih mail syntax.
-							if (! in_array($link_items[0],getSchemes() + array('mailto'))) {
-								$link['url']="Unauthorized URI scheme";
-							}
+                            // Strip trailing prefix
+                            if (substr($link['url'],0,strlen($force_uri_prefix)) === $force_uri_prefix) { $link['url'] = substr($link['url'], strlen($force_uri_prefix));  }
+                            // Check if it is an allowed protocol
+                            $link_items=explode(":",$link['url']);
+                            // Adds mailto as it is implicitely allowed wih mail syntax.
+                            if (! in_array($link_items[0],getSchemes() + array('mailto'))) {
+                                $link['url']="Unauthorized URI scheme";
+                            }
                             $link['name'] = $match['title'];
                             if ($link['name'] == "") $link['name'] = $match['link'];
                             $link['class'] = 'urlextern';
@@ -256,7 +257,7 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
                         $text = "<a ".$target." href='".$link['url']."'><span class='plugin_button' style='".hsc($match['css'])."'>$image<span class='plugin_button_text ${link['class']}'>";
                         if (substr($match[0],-1) != "|") $text .= $link['name'];
                         $renderer->doc .= $text; 
-						// Update meta data for move
+                        // Update meta data for move
                        p_set_metadata($ID, array(
                           'relation'=>array(
                               'references'=>array(
@@ -274,7 +275,7 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
                                   $match['image'],
                               ),
                           ),
-                        ));						
+                        ));                        
                     }
                 }
                 break;
@@ -310,12 +311,14 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
     function dokuwiki_get_link(&$xhtml, $id, $name = NULL) {
         global $ID;
         $resolveid = $id;    // To prevent resolve_pageid to change $id value
-        resolve_pageid(getNS($ID),$resolveid,$exists); //page file?
+        $resolveid = (new PageResolver($ID))->resolveId($resolveid);
+        $exists = page_exists($resolveid);
         if($exists) {
             return $this->internallink($xhtml,$id,$name);
         } 
         $resolveid = $id;   
-        resolve_mediaid(getNS($ID),$resolveid,$exists); //media file?
+        $resolveid = (new MediaResolver($ID))->resolveId($resolveid);
+        $exists = media_exists($resolveid);
         if($exists) {
             return $this->internalmedia($xhtml,$id,$name);
         } else {
@@ -357,7 +360,8 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
         $default = $xhtml->_simpleTitle($id);
     
         // now first resolve and clean up the $id
-        resolve_pageid(getNS($ID),$id,$exists);
+        $id = (new PageResolver($ID))->resolveId($id);
+        $exists = page_exists($id);
     
         $name = $xhtml->_getLinkTitle($name, $default, $isImage, $id, $linktype);
         if ( !$isImage ) {
@@ -372,7 +376,7 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
         }
     
         //keep hash anchor
-	$hash = NULL;
+    $hash = NULL;
         if (str_contains($id, '#')) list($id,$hash) = explode('#',$id,2);
         if(!empty($hash)) $hash = $xhtml->_headerToLink($hash);
     
@@ -418,11 +422,12 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
     function internalmedia (&$xhtml, $src, $title=NULL, $align=NULL, $width=NULL,
             $height=NULL, $cache=NULL, $linking=NULL) {
         global $ID;
-	    
-	$hash = NULL;
+        
+        $hash = NULL;
         if (str_contains($src, '#')) list($src,$hash) = explode('#',$src,2);
-        resolve_mediaid(getNS($ID),$src, $exists);
-    
+        $src = (new MediaResolver($ID))->resolveId($src);
+        $exists = media_exists($src);
+
         $noLink = false;
         $render = ($linking == 'linkonly') ? false : true;
         $link = $xhtml->_getMediaLinkConf($src, $title, $align, $width, $height, $cache, $render);
@@ -450,9 +455,8 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin {
     
         return $link;
         //output formatted
-//         if ($linking == 'nolink' || $noLink) $this->doc .= $link['name'];
-//         else $this->doc .= $this->_formatLink($link);
+        //if ($linking == 'nolink' || $noLink) $this->doc .= $link['name'];
+        //else $this->doc .= $this->_formatLink($link);
     }
 }
-
 ?>
