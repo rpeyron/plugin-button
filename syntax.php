@@ -31,6 +31,7 @@
  07/02/2022 : Added Português do Brasil translation (PR by mac-sousa)
  26/11/2022 : Fixed PHP8.1 warnings
  13/12/2022 : Fixed PHP7 with str_contains polyfill
+ 05/01/2025 : Added support for interwiki links  (#35)
  
  @author ThisNameIsNotAllowed
  17/11/2016 : Added generation of metadata
@@ -43,8 +44,7 @@
  18/08/2023 : Fixed deprecation warnings in PHP 8+  (#33)
 
  Knwon bugs:
- - interwiki syntax not supported
- - handle / render repartition is not optimal regarding cachind, most of the processing should be moved (#14)
+ - handle / render repartition is not optimal regarding caching, most of the processing should be moved (#14)
 */
 
 
@@ -355,7 +355,6 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin
             $exists = null;
             //$url = $xhtml->_resolveInterWiki($wikiName, $wikiUri, $exists);
             $link = $this->interwikilink($xhtml, $id, $name, $wikiName, $wikiUri, true);
-            var_dump($link);
             return $link;
         }
 
