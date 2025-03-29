@@ -9,6 +9,11 @@ Default style green and 15em [[{conf.styles}default|color:green; width:15em;]]
 
 Second style blue and 25em [[{conf.styles}second|color:blue; width:25em;]]
 
+===== Interwiki tests ====
+
+[[doku>interwiki]]
+
+[[{{buttons:books.png}doku>interwiki]] 
 
 ===== Basic tests =====
 

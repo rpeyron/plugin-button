@@ -31,6 +31,7 @@
  07/02/2022 : Added Português do Brasil translation (PR by mac-sousa)
  26/11/2022 : Fixed PHP8.1 warnings
  13/12/2022 : Fixed PHP7 with str_contains polyfill
+ 05/01/2025 : Added support for interwiki links  (#35)
  
  @author ThisNameIsNotAllowed
  17/11/2016 : Added generation of metadata
@@ -43,8 +44,7 @@
  18/08/2023 : Fixed deprecation warnings in PHP 8+  (#33)
 
  Knwon bugs:
- - interwiki syntax not supported
- - handle / render repartition is not optimal regarding cachind, most of the processing should be moved (#14)
+ - handle / render repartition is not optimal regarding caching, most of the processing should be moved (#14)
 */
 
 
@@ -342,9 +342,22 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin
         return false;
     }
 
+    // TODO: the way we get links from dokuwiki should be completely rewritten
+    // - target: rework repartition between parser/renderer to match dokuwiki guidelines
+    // - try to override $xhtml->_formatLink($link); to avoid the code duplication of the functions below
+
     function dokuwiki_get_link(&$xhtml, $id, $name = NULL)
     {
         global $ID;
+
+        if (link_isinterwiki($id)) {
+            [$wikiName, $wikiUri] = sexplode('>', $id, 2, '');
+            $exists = null;
+            //$url = $xhtml->_resolveInterWiki($wikiName, $wikiUri, $exists);
+            $link = $this->interwikilink($xhtml, $id, $name, $wikiName, $wikiUri, true);
+            return $link;
+        }
+
         $resolveid = $id; // To prevent resolve_pageid to change $id value
         $resolveid = (new PageResolver($ID))->resolveId($resolveid);
         $exists = page_exists($resolveid);
@@ -506,6 +519,60 @@ class syntax_plugin_button extends DokuWiki_Syntax_Plugin
         //output formatted
         //if ($linking == 'nolink' || $noLink) $this->doc .= $link['name'];
         //else $this->doc .= $this->_formatLink($link);
+    }
+
+    public function interwikilink(&$xhtml, $match, $name, $wikiName, $wikiUri, $returnonly = false)
+    {
+        global $conf;
+
+        $link = [];
+        $link['target'] = $conf['target']['interwiki'];
+        $link['pre'] = '';
+        $link['suf'] = '';
+        $link['more'] = '';
+        $link['name'] = $xhtml->_getLinkTitle($name, $wikiUri, $isImage);
+        $link['rel'] = '';
+
+        //get interwiki URL
+        $exists = null;
+        $url = $xhtml->_resolveInterWiki($wikiName, $wikiUri, $exists);
+
+        if (!$isImage) {
+            $class = preg_replace('/[^_\-a-z0-9]+/i', '_', $wikiName);
+            $link['class'] = "interwiki iw_$class";
+        } else {
+            $link['class'] = 'media';
+        }
+
+        //do we stay at the same server? Use local target
+        if (strpos($url, DOKU_URL) === 0 || strpos($url, DOKU_BASE) === 0) {
+            $link['target'] = $conf['target']['wiki'];
+        }
+        if ($exists !== null && !$isImage) {
+            if ($exists) {
+                $link['class'] .= ' wikilink1';
+            } else {
+                $link['class'] .= ' wikilink2';
+                $link['rel'] .= ' nofollow';
+            }
+        }
+        if ($conf['target']['interwiki']) $link['rel'] .= ' noopener';
+
+        $link['url'] = $url;
+        $link['title'] = $xhtml->_xmlEntities($link['url']);
+
+        // return non formatted link
+        return $link;
+
+        /*
+        // output formatted
+        if ($returnonly) {
+            if ($url == '') return $link['name'];
+            return $this->_formatLink($link);
+        } elseif ($url == '') {
+            $this->doc .= $link['name'];
+        } else $this->doc .= $this->_formatLink($link);
+        */
     }
 }
 
